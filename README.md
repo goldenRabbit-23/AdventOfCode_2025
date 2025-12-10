@@ -10,18 +10,20 @@ Each day lives in its own folder, with:
 
 ## 📅 Daily Overview
 
-| Day | Title                | Summary                                                                   |
-|-----|----------------------|---------------------------------------------------------------------------|
-| 01  | Secret Entrance      | Simulate a circular dial and count how often position `0` is hit/passed. |
-| 02  | Gift Shop            | Scan numeric ranges and sum numbers with repeated digit patterns.         |
-| 03  | Lobby                | Pick digits from “banks” to form optimal numeric codes.                   |
-| 04  | Printing Department  | Iteratively remove sparse `@` cells from a 2D grid until stable.          |
-| 05  | Cafeteria            | Work with integer ranges: count covered IDs and merge overlaps.           |
-| 06  | Trash Compactor      | Apply per-column `+` / `*` operations to numeric/ASCII digit columns.     |
-| 07  | Laboratories         | Simulate falling, splitting signals through a grid of tiles.              |
-| 08  | Playground           | Connect 3D junctions, form circuits, and track component merges.          |
-| 09  | Movie Theater        | Find the maximum-area axis-aligned rectangle inside a polygon.            |
-| 10  | Factory              | Use bitmasks and BFS to solve light toggling puzzles efficiently.         |
+| Day | Title                | Summary |
+|-----|----------------------|---------|
+| 01  | Secret Entrance      | Simulate a 0–99 safe dial and count how often it lands on 0, then how often any click hits 0. |
+| 02  | Gift Shop            | Scan product ID ranges and sum IDs whose digits are made from repeated patterns. |
+| 03  | Lobby                | From each digit bank, pick batteries to form the largest possible 2-digit and 12-digit values. |
+| 04  | Printing Department  | On a 2D `@`/`.` grid, find sparsely surrounded rolls, then iteratively remove them until stable. |
+| 05  | Cafeteria            | Work with fresh ID ranges: count which given IDs are fresh, then merge ranges and count all fresh IDs. |
+| 06  | Trash Compactor      | Parse column-based math problems and sum per-problem `+`/`*` results, then reinterpret them as right-to-left column numbers. |
+| 07  | Laboratories         | Simulate falling tachyon beams through splitters to count splits and total quantum timelines. |
+| 08  | Playground           | Connect nearest 3D junctions with union–find to size circuits and track the final joining pair. |
+| 09  | Movie Theater        | Use red tiles as opposite rectangle corners; then restrict rectangles to stay inside a red/green loop. |
+| 10  | Factory              | Use bitmasks and BFS for light toggling, then solve a minimal-press integer system for jolt counters. |
+| 11  |                      |  |
+| 12  |                      |  |
 
 ---
 
@@ -29,101 +31,168 @@ Each day lives in its own folder, with:
 
 ### Day 01: Secret Entrance
 
-Simulate turning a **0–99 circular dial** left and right from a starting position.
-While processing the instructions, count how often position `0` is **hit or passed**; use this to assemble a password.
+You’re given a sequence of rotations for a circular safe dial labeled `0`–`99`, starting at `50`. Each instruction rotates left (`L`) or right (`R`), wrapping around modulo 100.
+
+**Part 1 – Counting zero endpoints**
+
+- Simulate all rotations on the dial.
+- Count how many times the **final position** after a rotation is exactly `0`.
+
+**Part 2 – Counting all zero clicks**
+
+- Now count every **individual click** that lands on `0`, not just the final position.
+- Use arithmetic on distances to the next `0` and full revolutions instead of simulating each click.
 
 ---
 
 ### Day 02: Gift Shop
 
-Scan **numeric ranges** and sum all numbers whose decimal representations are made from **repeated digit patterns**:
+You’re given inclusive integer ranges of product IDs. Some IDs are “invalid” if their decimal representation consists of repeated digit patterns.
 
-- Simple two-half repeats (like `123123`)
-- More general patterns with arbitrary repetition periods
+**Part 1 – Two-block repeated IDs**
+
+- An ID is invalid if its digits are exactly **two copies** of the same block (like `123123`).
+- Scan each range, detect these two-block repeats, and sum all such IDs.
+
+**Part 2 – Arbitrary-period repeated IDs**
+
+- Generalize the rule: the digits must be **k ≥ 2 repetitions** of some shorter pattern.
+- For each ID, try pattern lengths that evenly divide the total length and sum all IDs that match.
 
 ---
 
 ### Day 03: Lobby
 
-Given rows of digits representing **“banks”**, choose digits in order to form the **best possible numeric codes**:
+Each line is a “bank” of digits (batteries). You choose some of them (in order) to form the largest possible number under different length constraints, then sum across all banks.
 
-- Part 1: focus on **two-digit combinations**
-- Part 2: build **fixed-length (12-digit)** maximum values
+**Part 1 – Best 2-digit output**
+
+- From each bank, choose exactly **two digits** (in order) to maximize the resulting 2-digit number.
+- Use a single pass per bank to track the best possible pair.
+
+**Part 2 – Best 12-digit output**
+
+- From each bank, choose exactly **12 digits** (in order) to maximize the 12-digit number.
+- Use a DP approach to decide which digits to keep or skip, then sum the best numbers.
 
 ---
 
 ### Day 04: Printing Department
 
-Work on a **2D grid of tiles**, repeatedly:
+You get a 2D grid of `@` (paper rolls) and `.` (empty). Rolls are “accessible” if they have fewer than four neighboring rolls in the eight surrounding cells.
 
-1. Identify cells with less than 4 neighboring `@` tiles
-2. Remove those cells
-3. Count how many are removed each round
+**Part 1 – Immediately accessible rolls**
 
-Continue until the layout reaches a **stable configuration**.
+- For each `@`, count neighboring `@` cells.
+- Count how many rolls have **< 4 neighbors**, i.e. are directly accessible.
+
+**Part 2 – Cascading roll removal**
+
+- Repeatedly remove all accessible `@` rolls in rounds.
+- Keep going until no more rolls qualify; count how many total rolls were removed.
 
 ---
 
 ### Day 05: Cafeteria
 
-Process **inclusive integer ranges**:
+The input is split into a section of inclusive fresh ID ranges and a section of available IDs.
 
-- Count how many given IDs fall in any **“fresh” interval**
-- Merge overlapping ranges and compute the **total size of the union**
+**Part 1 – Freshness of given IDs**
+
+- For each available ID, check whether it falls into **any** fresh range.
+- Count how many available IDs are fresh.
+
+**Part 2 – Size of the fresh ID universe**
+
+- Ignore the available IDs and just consider the ranges.
+- Merge overlapping ranges and count how many distinct IDs are covered by their union.
 
 ---
 
 ### Day 06: Trash Compactor
 
-Interpret:
+You’re given a horizontally laid-out worksheet of column-based math problems (`+` or `*`) and must sum all problem results.
 
-- Columns of numbers
-- Later, an **ASCII-art style multi-line digit display**
+**Part 1 – Standard column problems**
 
-For each column/block, apply a specified operator (`+` or `*`) and compute a combined **checksum**.
+- Interpret each problem as a column of regular integers plus an operator.
+- Group numbers by problem and apply `+` or `*`, then sum all results.
+
+**Part 2 – Cephalopod right-to-left math**
+
+- Reinterpret the worksheet so that each **vertical column** within a block is one number, with digits top-to-bottom.
+- Split the grid into contiguous non-empty column blocks, extract the column-numbers for each block, apply the operator, and sum the results.
 
 ---
 
 ### Day 07: Laboratories
 
-Simulate a **signal** starting at the top of a grid:
+You simulate tachyon beams falling through a grid with a start `S`, empty space `.`, and splitters `^`.
 
-- It falls downward, interacting with tiles
-- On `^` tiles it may **split into multiple branches**
-- Count both:
-  - The number of **splits**
-  - The total number of ways the signal can **reach the bottom**
+**Part 1 – Classical beam splits**
+
+- A classical beam falls straight down.
+- When it hits `^`, the current beam stops and splits into two new beams (down-left and down-right); count each such split.
+
+**Part 2 – Quantum timeline counts**
+
+- A single quantum particle branches into all possible paths at each splitter.
+- Track how many ways each cell can be reached and sum the counts on the bottom row to get the number of timelines.
 
 ---
 
 ### Day 08: Playground
 
-Given coordinates of **junctions in 3D space**:
+You have many junction boxes in 3D (`X,Y,Z`) and want to connect them with strings of lights, always choosing the closest pairs first.
 
-- Connect nearby pairs to form **circuits**
-- Analyze the sizes of the resulting **components**
-- Track the **final connection** that merges everything into one network
+**Part 1 – First 1000 nearest connections**
+
+- Compute all squared pairwise distances.
+- Connect the **1000 closest pairs** using union–find, then take the sizes of the three largest resulting components and multiply them.
+
+**Part 2 – Final connection to unify the network**
+
+- Continue connecting closest pairs until everything is in one connected component.
+- Record the last pair of junctions that actually merges two components and return the product of their X-coordinates.
 
 ---
 
 ### Day 09: Movie Theater
 
-Given **2D points** and an **axis-aligned polygon boundary**:
+You’re given positions of red tiles in a grid and want rectangles whose opposite corners are red.
 
-- Explore candidate rectangles
-- Determine the **maximum-area axis-aligned rectangle** that fits entirely within the allowed region
+**Part 1 – Maximum red-corner rectangle**
+
+- For every pair of red tiles, treat them as opposite corners of an axis-aligned rectangle.
+- Compute its area and take the maximum over all pairs.
+
+**Part 2 – Largest rectangle inside the red/green loop**
+
+- Red tiles form a closed, axis-aligned loop with green tiles along edges and inside.
+- Only consider rectangles that use red corners and lie completely inside (or on) that loop; pick the one with the largest area.
 
 ---
 
 ### Day 10: Factory
 
-For each line describing:
+Each machine has indicator lights, buttons, and joltage counters. Buttons either toggle lights (Part 1) or increment counters (Part 2).
 
-- A strip of **lights**
-- Groups of **buttons** which toggle subsets of lights
+**Part 1 – Indicator lights**
 
-Use **bitmasks** and **BFS** to find the **minimum number of button presses** needed to reach each target light pattern.
+- Lights start all off, and buttons toggle specified subsets of lights.
+- Model states as bitmasks and use BFS over configurations to find the minimum number of button presses that reaches the target pattern.
 
-Part two may use an **optimized/compiled variant** for better performance.
+**Part 2 – Joltage counters**
+
+- Ignore lights; counters start at zero, and each button adds `+1` to certain counters.
+- Form an integer system specifying how many times to press each button to hit all target jolts, and use an optimizer to find the solution with minimal total presses.
+
+---
+
+### Day 11:
+
+---
+
+### Day 12:
 
 ---
