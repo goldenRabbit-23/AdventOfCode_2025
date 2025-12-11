@@ -22,7 +22,7 @@ Each day lives in its own folder, with:
 | 08  | Playground           | Connect nearest 3D junctions with union–find to size circuits and track the final joining pair. |
 | 09  | Movie Theater        | Use red tiles as opposite rectangle corners; then restrict rectangles to stay inside a red/green loop. |
 | 10  | Factory              | Use bitmasks and BFS for light toggling, then solve a minimal-press integer system for jolt counters. |
-| 11  |                      |  |
+| 11  | Reactor              | Traverse a directed graph of devices to count paths from start to output, then calculate paths that must visit specific intermediate nodes. |
 | 12  |                      |  |
 
 ---
@@ -189,7 +189,19 @@ Each machine has indicator lights, buttons, and joltage counters. Buttons either
 
 ---
 
-### Day 11:
+### Day 11: Reactor
+
+You receive a list of devices and the other devices they feed data into, forming a DAG.
+
+**Part 1 – Paths from `you` to `out`**
+
+- Start at the device labeled you and find every possible path to the reactor out.
+- Use DFS with memoization to efficiently sum the path counts, as the total number of paths can be exponential.
+
+**Part 2 – Paths via `dac` and `fft`**
+
+- Find paths from `svr` to `out` that are required to pass through both `dac` and `fft`.
+- Because the graph is acyclic, the nodes must be visited in a linear order (e.g., `svr` → `dac` → `fft` → `out`); calculate path counts for each segment independently and multiply them.
 
 ---
 
