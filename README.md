@@ -195,7 +195,7 @@ You receive a list of devices and the other devices they feed data into, forming
 
 **Part 1 – Paths from `you` to `out`**
 
-- Start at the device labeled you and find every possible path to the reactor out.
+- Start at the device labeled `you` and find every possible path to the reactor `out`.
 - Use DFS with memoization to efficiently sum the path counts, as the total number of paths can be exponential.
 
 **Part 2 – Paths via `dac` and `fft`**

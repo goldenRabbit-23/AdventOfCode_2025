@@ -18,24 +18,13 @@ def main() -> None:
         if current not in graph:
             return 0
 
-        total = 0
-
-        for neigh in graph[current]:
-            total += dfs(neigh, target)
-
-        return total
+        return sum(dfs(neigh, target) for neigh in graph[current])
 
     # Scenario 1: svr -> dac -> fft -> out
-    s1_part1 = dfs("svr", "dac")
-    s1_part2 = dfs("dac", "fft")
-    s1_part3 = dfs("fft", "out")
-    scenario1 = s1_part1 * s1_part2 * s1_part3
+    scenario1 = dfs("svr", "dac") * dfs("dac", "fft") * dfs("fft", "out")
 
     # Scenario 2: svr -> fft -> dac -> out
-    s2_part1 = dfs("svr", "fft")
-    s2_part2 = dfs("fft", "dac")
-    s2_part3 = dfs("dac", "out")
-    scenario2 = s2_part1 * s2_part2 * s2_part3
+    scenario2 = dfs("svr", "fft") * dfs("fft", "dac") * dfs("dac", "out")
 
     print(scenario1 + scenario2)
 

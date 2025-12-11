@@ -15,12 +15,7 @@ def main() -> None:
         if current == "out":
             return 1
 
-        total = 0
-
-        for neigh in graph[current]:
-            total += dfs(neigh)
-
-        return total
+        return sum(dfs(neigh) for neigh in graph[current])
 
     print(dfs("you"))
 
