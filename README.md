@@ -23,7 +23,7 @@ Each day lives in its own folder, with:
 | 09  | Movie Theater        | Use red tiles as opposite rectangle corners; then restrict rectangles to stay inside a red/green loop. |
 | 10  | Factory              | Use bitmasks and BFS for light toggling, then solve a minimal-press integer system for jolt counters. |
 | 11  | Reactor              | Traverse a directed graph of devices to count paths from start to output, then calculate paths that must visit specific intermediate nodes. |
-| 12  |                      |  |
+| 12  | Christmas Tree Farm  | For each rectangular region, determine whether it can fit all presents while satisfying the required counts. |
 
 ---
 
@@ -205,6 +205,13 @@ You receive a list of devices and the other devices they feed data into, forming
 
 ---
 
-### Day 12:
+### Day 12: Christmas Tree Farm
+
+You’re given a set of 3x3 present shapes and a list of rectangular regions, each with required counts; determine which regions can fit all presents without overlap (allowing rotations/flips and using holes).
+
+**Part 1 - Count regions that can fit the required presents**
+
+- For each region, compute total presents `n` and total area `W * H`.
+- Using the fixed per-shape diagram footprint `f`, count the region where `n * f <= W * H`.
 
 ---
